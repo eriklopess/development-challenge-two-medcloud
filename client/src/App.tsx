@@ -1,6 +1,7 @@
 import React from 'react';
 import './App.css';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Customers from './pages/Customers';
 
 function App() {
   return (
@@ -9,7 +10,7 @@ function App() {
         <Route path="/" />
         <Route path="/register" />
         <Route path="/login" />
-        <Route path="/customers" />
+        <Route path="/customers" element={<Customers />} />
         <Route path="/customers/:id" />
       </Routes>
     </BrowserRouter>
