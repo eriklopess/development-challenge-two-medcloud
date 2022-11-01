@@ -11,7 +11,6 @@ function App() {
         <Route path="/register" />
         <Route path="/login" />
         <Route path="/customers" element={<Customers />} />
-        <Route path="/customers/:id" />
       </Routes>
     </BrowserRouter>
   );
