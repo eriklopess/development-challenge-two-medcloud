@@ -9,7 +9,7 @@ import HomeIcon from '@mui/icons-material/Home';
 import PeopleIcon from '@mui/icons-material/People';
 import { useNavigate } from 'react-router-dom';
 
-export default function DrawerComponent() {
+export default function DrawerComponent(): JSX.Element {
   const [open, setOpen] = useState(false);
   const handleDrawerClose = () => {
     setOpen(false);

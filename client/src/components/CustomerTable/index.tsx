@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, { useState } from 'react';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -12,26 +12,15 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import TableHead from '@mui/material/TableHead';
 import IconButton from '@mui/material/IconButton';
+import { useCustomers } from '../../context/customer.context';
+import Customer from '../../interfaces/customer.interface';
 
-function createData(name: string, email: string, birthDate: string, address: string) {
-  return {
-    name, email, birthDate, address,
-  };
-}
+export default function CustomerTable(): JSX.Element {
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [customers, setCustomers] = useCustomers();
 
-const rows = [
-
-];
-
-for (let i = 0; i < 100; i += 1) {
-  rows.push(createData(`Name ${i}`, `Email ${i}`, `BirthDate ${i}`, `Address ${i}`));
-}
-
-export default function CustomerTable() {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - customers.length) : 0;
 
   const handleChangePage = (
     event: React.MouseEvent<HTMLButtonElement> | null,
@@ -47,6 +36,13 @@ export default function CustomerTable() {
     setPage(0);
   };
 
+  const handleDeleteUser = (email: string) => {
+  };
+
+  const handleEditUser = (email: string) => {
+    console.log(email);
+  };
+
   return (
     <TableContainer
       component={Paper}
@@ -54,54 +50,42 @@ export default function CustomerTable() {
         display: 'flex', width: '95%', m: 'auto',
       }}
     >
-      <Table sx={{ minWidth: 500 }} aria-label="customers table">
+      <Table sx={{ minWidth: 500 }} aria-label="customers table" size="small">
         <TableHead>
-          <TableRow>
-            <TableCell>
-              Nome
-            </TableCell>
-            <TableCell align="right">
-              Email
-            </TableCell>
-            <TableCell align="right">
-              Data de Nascimento
-            </TableCell>
-            <TableCell align="right">
-              Endereço
-            </TableCell>
-            <TableCell align="right">
-              Excluir
-            </TableCell>
-            <TableCell align="right">
-              Editar
-            </TableCell>
+          <TableRow sx={{ bgcolor: '#333333' }}>
+            {['Nome', 'Email', 'Data de Nascimento', 'Endereço', 'Excluir', 'Editar'].map((header) => (
+              <TableCell
+                key={header}
+                sx={{ color: 'white' }}
+              >
+                {header}
+              </TableCell>
+            ))}
           </TableRow>
         </TableHead>
         <TableBody>
           {(rowsPerPage > 0
-            ? rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-            : rows
-          ).map((row) => (
-            <TableRow key={row.name}>
-              <TableCell component="th" scope="row">
-                {row.name}
-              </TableCell>
-              <TableCell align="right">
-                {row.email}
-              </TableCell>
-              <TableCell align="right">
-                {row.birthDate}
-              </TableCell>
-              <TableCell align="right">
-                {row.address}
-              </TableCell>
-              <TableCell style={{ width: 50 }} align="right">
-                <IconButton>
+            ? customers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+            : customers
+          ).map((customer: Customer) => (
+            <TableRow
+              key={customer.name}
+              sx={{ '&:nth-child(even)': { bgcolor: '#f2f1ec' }, boxShadow: 0 }}
+            >
+              {
+                Object.values(customer).map((value) => (
+                  <TableCell key={value}>
+                    {value}
+                  </TableCell>
+                ))
+              }
+              <TableCell style={{ width: 50 }}>
+                <IconButton onClick={() => handleDeleteUser(customer.email)}>
                   <DeleteIcon />
                 </IconButton>
               </TableCell>
-              <TableCell style={{ width: 50 }} align="right">
-                <IconButton>
+              <TableCell style={{ width: 50 }}>
+                <IconButton onClick={() => handleEditUser(customer.email)}>
                   <EditIcon />
                 </IconButton>
               </TableCell>
@@ -116,17 +100,17 @@ export default function CustomerTable() {
         <TableFooter>
           <TableRow>
             <TablePagination
-              rowsPerPageOptions={[10, 25, 50, { label: 'All', value: -1 }]}
+              rowsPerPageOptions={[5, 10, 25, 50, { label: 'Todos', value: -1 }]}
               colSpan={3}
-              count={rows.length}
+              count={customers.length}
               rowsPerPage={rowsPerPage}
               page={page}
               SelectProps={{
                 inputProps: {
                   'aria-label': 'rows per page',
                 },
-                native: true,
               }}
+              labelRowsPerPage="Linhas por página:"
               onPageChange={handleChangePage}
               onRowsPerPageChange={handleChangeRowsPerPage}
               ActionsComponent={TablePaginationActions}
